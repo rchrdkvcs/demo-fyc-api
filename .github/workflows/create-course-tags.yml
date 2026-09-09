@@ -23,6 +23,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           while read -r tag sha message; do
             if git show-ref --tags --verify --quiet "refs/tags/${tag}"; then
               continue
