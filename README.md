@@ -118,6 +118,7 @@ Le checkpoint `4.3` ajoute les Applications Argo CD dans
 [`gitops/argocd/applications.yaml`](gitops/argocd/applications.yaml) et le
 workflow de rendu des manifests. La boucle GitOps et ses garde-fous sont
 documentés dans [`docs/chapters/4.3-gitops.md`](docs/chapters/4.3-gitops.md).
+Le tag `4.3.1` corrige le rendu des tags d'image numériques dans Kustomize.
 
 ## Démarrer en local
 
