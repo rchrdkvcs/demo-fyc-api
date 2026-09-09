@@ -98,6 +98,11 @@ Le checkpoint `3.2` ajoute le HPA portable
 les vérifications PVC/Metrics Server dans
 [`docs/chapters/3.2-stockage-autoscaling.md`](docs/chapters/3.2-stockage-autoscaling.md).
 
+Le checkpoint `3.3` propose le manifeste CloudNativePG
+[`deploy/kubernetes/cloud/03-cloudnativepg.yaml`](deploy/kubernetes/cloud/03-cloudnativepg.yaml)
+et les prérequis de l'opérateur, de la connexion API et des snapshots dans
+[`docs/chapters/3.3-cloudnativepg.md`](docs/chapters/3.3-cloudnativepg.md).
+
 ## Démarrer en local
 
 Prérequis : **Node.js 24 ou supérieur**, **pnpm 11.7.0** et **PostgreSQL**.

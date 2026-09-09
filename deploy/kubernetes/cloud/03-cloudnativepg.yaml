@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: demo-fyc-db-app
+  namespace: demo-fyc
+type: kubernetes.io/basic-auth
+stringData:
+  username: app
+  password: demo-cnpg-password
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: demo-fyc-db
+  namespace: demo-fyc
+spec:
+  instances: 3
+  bootstrap:
+    initdb:
+      database: demo_fyc
+      owner: app
+      secret:
+        name: demo-fyc-db-app
+  storage:
+    size: 5Gi
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: demo-fyc-db-daily
+  namespace: demo-fyc
+spec:
+  schedule: '0 0 2 * * *'
+  backupOwnerReference: self
+  method: volumeSnapshot
+  cluster:
+    name: demo-fyc-db
