@@ -1,0 +1,73 @@
+---
+- name: Préparer un hôte de démonstration pour demo-fyc-api
+  hosts: api
+  become: true
+  vars:
+    app_user: demo-fyc
+    app_root: /opt/demo-fyc-api
+    app_env_file: /etc/demo-fyc-api/demo-fyc-api.env
+    app_domain: api.example.com
+  tasks:
+    - name: Installer les paquets système
+      ansible.builtin.apt:
+        name:
+          - ca-certificates
+          - git
+          - nginx
+        state: present
+        update_cache: true
+
+    - name: Créer l'utilisateur applicatif
+      ansible.builtin.user:
+        name: "{{ app_user }}"
+        system: true
+        create_home: false
+        home: "{{ app_root }}"
+
+    - name: Créer les répertoires de l'application
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        state: directory
+        owner: "{{ app_user }}"
+        group: "{{ app_user }}"
+        mode: "{{ item.mode }}"
+      loop:
+        - { path: "{{ app_root }}", mode: '0755' }
+        - { path: '/etc/demo-fyc-api', mode: '0750' }
+
+    - name: Installer le modèle systemd
+      ansible.builtin.template:
+        src: templates/demo-fyc-api.service.j2
+        dest: /etc/systemd/system/demo-fyc-api.service
+        owner: root
+        group: root
+        mode: '0644'
+      notify: Redémarrer l'API
+
+    - name: Installer le reverse proxy Nginx
+      ansible.builtin.template:
+        src: templates/demo-fyc-api.nginx.conf.j2
+        dest: /etc/nginx/sites-available/demo-fyc-api
+        owner: root
+        group: root
+        mode: '0644'
+      notify: Recharger Nginx
+
+    - name: Activer le site Nginx
+      ansible.builtin.file:
+        src: /etc/nginx/sites-available/demo-fyc-api
+        dest: /etc/nginx/sites-enabled/demo-fyc-api
+        state: link
+      notify: Recharger Nginx
+
+  handlers:
+    - name: Redémarrer l'API
+      ansible.builtin.systemd_service:
+        name: demo-fyc-api
+        state: restarted
+        daemon_reload: true
+
+    - name: Recharger Nginx
+      ansible.builtin.systemd_service:
+        name: nginx
+        state: reloaded

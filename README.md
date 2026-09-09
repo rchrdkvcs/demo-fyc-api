@@ -103,6 +103,13 @@ Le checkpoint `3.3` propose le manifeste CloudNativePG
 et les prérequis de l'opérateur, de la connexion API et des snapshots dans
 [`docs/chapters/3.3-cloudnativepg.md`](docs/chapters/3.3-cloudnativepg.md).
 
+## Automatiser le provisioning et la configuration
+
+Le checkpoint IaC est `4.1`. Les squelettes Terraform/OpenTofu et Ansible se
+trouvent dans [`infra/`](infra/) ; le dépôt ne contient aucun provider cloud,
+credential ou état Terraform. La distinction et les commandes de validation
+sont dans [`docs/chapters/4.1-iac.md`](docs/chapters/4.1-iac.md).
+
 ## Démarrer en local
 
 Prérequis : **Node.js 24 ou supérieur**, **pnpm 11.7.0** et **PostgreSQL**.

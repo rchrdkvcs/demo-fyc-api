@@ -1,0 +1,17 @@
+[Unit]
+Description=Demo FYC API
+After=network.target
+
+[Service]
+Type=simple
+User={{ app_user }}
+WorkingDirectory={{ app_root }}/build
+EnvironmentFile={{ app_env_file }}
+ExecStart=/usr/bin/node bin/server.js
+Restart=on-failure
+RestartSec=5
+PrivateTmp=true
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target
