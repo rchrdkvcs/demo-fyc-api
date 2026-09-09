@@ -25,6 +25,7 @@ Les titres de chapitres présents dans Notion utilisent parfois une numérotatio
 | `4.1` | IaC | Squelettes Terraform/OpenTofu et Ansible, sans credentials |
 | `4.2` | Kustomize | Base commune et overlays `staging` / `production` |
 | `4.3` | GitOps | Applications Argo CD et procédure de réconciliation |
+| `4.3.1` | Correctif technique | Rendu Kustomize corrigé pour les tags d'image numériques |
 
 ## Démarrer un checkpoint
 
