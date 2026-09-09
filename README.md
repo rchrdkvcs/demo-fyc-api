@@ -4,6 +4,21 @@ Une petite application pour comparer le déploiement sur un serveur, un VPS,
 Docker Compose ou Kubernetes. Les tweets sont stockés dans PostgreSQL via Lucid.
 Les produits restent des données fictives définies dans le code. Aucun compte requis.
 
+## Fil rouge du cours
+
+Ce dépôt est utilisé comme fil rouge du cours **Déployer une API à différentes échelles**.
+Les checkpoints sont disponibles avec des tags Git annotés : consultez
+[`docs/repository-map.md`](docs/repository-map.md) pour la correspondance complète
+entre modules, chapitres et états du dépôt.
+
+```sh
+git clone https://github.com/rchrdkvcs/demo-fyc-api.git
+cd demo-fyc-api
+git checkout 1.1
+```
+
+La convention est `module.chapitre` : `2.1` signifie module 2, chapitre 1.
+
 ## Démarrer en local
 
 Prérequis : **Node.js 24 ou supérieur**, **pnpm 11.7.0** et **PostgreSQL**.
@@ -25,17 +40,20 @@ L’application écoute sur <http://localhost:3333> par défaut.
 | ------- | ------------- | ----------------------------------------------------------------- |
 | GET     | /             | Page HTML avec des liens vers les deux endpoints                  |
 | GET     | /health       | JSON : état `ok`, durée de fonctionnement en secondes et date UTC |
+| GET     | /ready        | JSON `ready` si PostgreSQL répond, sinon HTTP 503               |
 | GET     | /api/products | JSON : trois produits fictifs sous la clé `data`                  |
 
 ```sh
 curl -i http://localhost:3333/
 curl -i http://localhost:3333/health
+curl -i http://localhost:3333/ready
 curl -i http://localhost:3333/api/products
 ```
 
 Les trois routes renvoient HTTP 200. Une route inconnue renvoie HTTP 404.
 `/health` est une sonde de vie du processus, pas une vérification de services externes.
-Sa réponse n’est pas mise en cache.
+`/ready` est une sonde de disponibilité qui vérifie PostgreSQL. Sa réponse n’est pas
+mise en cache.
 
 ## Tweets — CRUD minimal
 
