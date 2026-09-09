@@ -7,6 +7,6 @@ resources:
 images:
   - name: demo-fyc-api
     newName: ghcr.io/rchrdkvcs/demo-fyc-api
-    newTag: 4.2
+    newTag: "4.2"
 patches:
   - path: replicas.yaml
