@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: demo-fyc-api
+  namespace: demo-fyc
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: api.localtest.me
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: demo-fyc-api
+                port:
+                  name: http

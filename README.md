@@ -78,6 +78,14 @@ Le premier checkpoint du module 2 est `2.1`. Le fichier
 l'API et une base PostgreSQL volontairement simple. L'atelier et ses limites
 sont décrits dans [`docs/chapters/2.1-swarm.md`](docs/chapters/2.1-swarm.md).
 
+## Déployer sur Kubernetes local
+
+Le checkpoint Kubernetes est tagué `2.2`. Les manifestes sont dans
+[`deploy/kubernetes/local/`](deploy/kubernetes/local/) et le déroulé est décrit
+dans [`docs/chapters/2.2-kubernetes-local.md`](docs/chapters/2.2-kubernetes-local.md).
+Ils utilisent l'image locale `demo-fyc-api:2.2`, un Job de migration séparé,
+trois réplicas API, un PVC PostgreSQL, des probes et un Ingress optionnel.
+
 ## Démarrer en local
 
 Prérequis : **Node.js 24 ou supérieur**, **pnpm 11.7.0** et **PostgreSQL**.
