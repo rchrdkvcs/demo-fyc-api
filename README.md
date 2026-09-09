@@ -48,6 +48,22 @@ et persiste les données dans `postgres_data`. Les commandes de diagnostic et la
 procédure de remise à zéro sont détaillées dans
 [`docs/chapters/1.4-compose.md`](docs/chapters/1.4-compose.md).
 
+## Publier l'image
+
+Le checkpoint registre est tagué `1.5`. L'image peut être publiée manuellement
+ou automatiquement dans GHCR :
+
+```sh
+docker build -t ghcr.io/rchrdkvcs/demo-fyc-api:1.5 .
+docker login ghcr.io
+docker push ghcr.io/rchrdkvcs/demo-fyc-api:1.5
+```
+
+Le workflow [`publish-image.yml`](.github/workflows/publish-image.yml) reprend
+la même convention pour les tags `module.chapitre`. Voir
+[`docs/chapters/1.5-registre.md`](docs/chapters/1.5-registre.md) avant de rendre
+le package public ou de l'utiliser depuis un cluster.
+
 ## Démarrer en local
 
 Prérequis : **Node.js 24 ou supérieur**, **pnpm 11.7.0** et **PostgreSQL**.
