@@ -114,7 +114,7 @@ Le checkpoint `4.2` ajoute la base et les overlays Kustomize dans
 [`deploy/kustomize/`](deploy/kustomize/) : `staging` et `production` peuvent
 être rendus ou appliqués séparément avec `kubectl kustomize` / `kubectl apply -k`.
 
-Le dernier checkpoint `4.3` ajoute les Applications Argo CD dans
+Le checkpoint `4.3` ajoute les Applications Argo CD dans
 [`gitops/argocd/applications.yaml`](gitops/argocd/applications.yaml) et le
 workflow de rendu des manifests. La boucle GitOps et ses garde-fous sont
 documentés dans [`docs/chapters/4.3-gitops.md`](docs/chapters/4.3-gitops.md).
