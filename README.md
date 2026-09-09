@@ -86,6 +86,13 @@ dans [`docs/chapters/2.2-kubernetes-local.md`](docs/chapters/2.2-kubernetes-loca
 Ils utilisent l'image locale `demo-fyc-api:2.2`, un Job de migration séparé,
 trois réplicas API, un PVC PostgreSQL, des probes et un Ingress optionnel.
 
+## Passer sur un Kubernetes managé
+
+Le premier checkpoint cloud est `3.1`. Le fichier
+[`deploy/kubernetes/cloud/01-loadbalancer.yaml`](deploy/kubernetes/cloud/01-loadbalancer.yaml)
+transforme le Service API en `LoadBalancer` ; la checklist provider-neutral se
+trouve dans [`deploy/kubernetes/cloud/README.md`](deploy/kubernetes/cloud/README.md).
+
 ## Démarrer en local
 
 Prérequis : **Node.js 24 ou supérieur**, **pnpm 11.7.0** et **PostgreSQL**.
