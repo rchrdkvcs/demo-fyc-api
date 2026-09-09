@@ -47,4 +47,5 @@ jobs:
           4.1 62a4c0c440ca5cf4ab3bc6d15faa4c9869c67e86 Module 4 chapitre 1 : Infrastructure as Code
           4.2 ab052b1ecd62770ff08ac3acb334d18d531ff061 Module 4 chapitre 2 : base et overlays Kustomize
           4.3 8b315e4b7b9c0ffc8bf160b88651099916027c4a Module 4 chapitre 3 : GitOps avec Argo CD
+          4.3.1 259998ad0a3200fcc8d361923726f9fbb8049c43 Module 4 chapitre 3 : correction technique du rendu Kustomize
           TAGS
