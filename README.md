@@ -71,6 +71,13 @@ Le checkpoint VPS est tagué `1.6`. Les modèles Nginx et systemd se trouvent da
 [`docs/chapters/1.6-vps.md`](docs/chapters/1.6-vps.md). Les secrets restent dans
 `/etc/demo-fyc-api/`, hors du dépôt.
 
+## Comparer avec Docker Swarm
+
+Le premier checkpoint du module 2 est `2.1`. Le fichier
+[`deploy/swarm/stack.yaml`](deploy/swarm/stack.yaml) déclare trois réplicas de
+l'API et une base PostgreSQL volontairement simple. L'atelier et ses limites
+sont décrits dans [`docs/chapters/2.1-swarm.md`](docs/chapters/2.1-swarm.md).
+
 ## Démarrer en local
 
 Prérequis : **Node.js 24 ou supérieur**, **pnpm 11.7.0** et **PostgreSQL**.
