@@ -19,6 +19,19 @@ git checkout 1.1
 
 La convention est `module.chapitre` : `2.1` signifie module 2, chapitre 1.
 
+## Construire l'image Docker
+
+Le checkpoint Dockerfile est tagué `1.3` :
+
+```sh
+docker build -t demo-fyc-api:1.3 .
+```
+
+L'image est multi-stage et démarre `node bin/server.js` depuis le build de
+production. Elle attend au minimum `APP_KEY`, `HOST`, `PORT` et les variables
+`DB_*`. Pour le détail de l'atelier et du cache de build, voir
+[`docs/chapters/1.3-dockerfile.md`](docs/chapters/1.3-dockerfile.md).
+
 ## Démarrer en local
 
 Prérequis : **Node.js 24 ou supérieur**, **pnpm 11.7.0** et **PostgreSQL**.
