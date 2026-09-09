@@ -64,6 +64,13 @@ la même convention pour les tags `module.chapitre`. Voir
 [`docs/chapters/1.5-registre.md`](docs/chapters/1.5-registre.md) avant de rendre
 le package public ou de l'utiliser depuis un cluster.
 
+## Déployer manuellement sur un VPS
+
+Le checkpoint VPS est tagué `1.6`. Les modèles Nginx et systemd se trouvent dans
+[`deploy/vps/`](deploy/vps/) et la procédure complète dans
+[`docs/chapters/1.6-vps.md`](docs/chapters/1.6-vps.md). Les secrets restent dans
+`/etc/demo-fyc-api/`, hors du dépôt.
+
 ## Démarrer en local
 
 Prérequis : **Node.js 24 ou supérieur**, **pnpm 11.7.0** et **PostgreSQL**.
