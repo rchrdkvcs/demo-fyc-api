@@ -1,0 +1,45 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: demo-fyc-migrate
+  annotations:
+    argocd.argoproj.io/hook: PreSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+spec:
+  backoffLimit: 4
+  ttlSecondsAfterFinished: 300
+  template:
+    metadata:
+      labels:
+        app: demo-fyc-migrate
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: migrate
+          image: demo-fyc-api:4.2
+          imagePullPolicy: IfNotPresent
+          command: ['node', 'ace', 'migration:run', '--force']
+          envFrom:
+            - configMapRef:
+                name: demo-fyc-api-config
+          env:
+            - name: APP_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: demo-fyc-secrets
+                  key: APP_KEY
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: demo-fyc-secrets
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: demo-fyc-secrets
+                  key: DB_PASSWORD
+            - name: DB_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: demo-fyc-secrets
+                  key: DB_DATABASE

@@ -110,6 +110,10 @@ trouvent dans [`infra/`](infra/) ; le dépôt ne contient aucun provider cloud,
 credential ou état Terraform. La distinction et les commandes de validation
 sont dans [`docs/chapters/4.1-iac.md`](docs/chapters/4.1-iac.md).
 
+Le checkpoint `4.2` ajoute la base et les overlays Kustomize dans
+[`deploy/kustomize/`](deploy/kustomize/) : `staging` et `production` peuvent
+être rendus ou appliqués séparément avec `kubectl kustomize` / `kubectl apply -k`.
+
 ## Démarrer en local
 
 Prérequis : **Node.js 24 ou supérieur**, **pnpm 11.7.0** et **PostgreSQL**.
