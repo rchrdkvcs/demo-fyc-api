@@ -6,7 +6,7 @@ metadata:
 type: Opaque
 stringData:
   # Valeurs de laboratoire uniquement. Utiliser un gestionnaire de secrets en production.
-  APP_KEY: base64:ZGVtby1meWMtYXBwLWtleS1mb3Ita2luZC1vbmx5
+  APP_KEY: base64:ZGVtby1meWMtYXBwLWtleS1mb3Ita2luZC1vbmx5ISE=
   DB_USER: postgres
   DB_PASSWORD: postgres
   DB_DATABASE: demo_fyc
