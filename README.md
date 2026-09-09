@@ -93,6 +93,11 @@ Le premier checkpoint cloud est `3.1`. Le fichier
 transforme le Service API en `LoadBalancer` ; la checklist provider-neutral se
 trouve dans [`deploy/kubernetes/cloud/README.md`](deploy/kubernetes/cloud/README.md).
 
+Le checkpoint `3.2` ajoute le HPA portable
+[`deploy/kubernetes/cloud/02-hpa.yaml`](deploy/kubernetes/cloud/02-hpa.yaml) et
+les vérifications PVC/Metrics Server dans
+[`docs/chapters/3.2-stockage-autoscaling.md`](docs/chapters/3.2-stockage-autoscaling.md).
+
 ## Démarrer en local
 
 Prérequis : **Node.js 24 ou supérieur**, **pnpm 11.7.0** et **PostgreSQL**.

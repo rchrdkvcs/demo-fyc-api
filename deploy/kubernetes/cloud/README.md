@@ -25,3 +25,23 @@ kubectl get service demo-fyc-api -n demo-fyc --watch
 7. Supprimer le cluster et les ressources cloud à la fin du TP pour éviter une facturation prolongée.
 
 Les noms de CLI, les classes de stockage, les règles réseau et les coûts sont propres au fournisseur. Ils doivent être vérifiés dans sa documentation et ne sont pas codés en dur dans ce dépôt.
+
+## Stockage et autoscaling
+
+Le PVC `demo-fyc-db` de `../local/01-db.yaml` demande `1Gi` et utilise la `StorageClass` par défaut du cluster. Avant de l'appliquer dans le cloud :
+
+```sh
+kubectl get storageclass
+kubectl describe pvc demo-fyc-db -n demo-fyc
+kubectl get pv
+```
+
+Le HPA du checkpoint `3.2` est portable :
+
+```sh
+kubectl apply -f 02-hpa.yaml
+kubectl get hpa -n demo-fyc --watch
+kubectl top pods -n demo-fyc
+```
+
+Il nécessite un Metrics Server fonctionnel et les `resources.requests` présents dans le Deployment API. L'augmentation du nombre de Pods ne crée pas automatiquement de machines : le Node Autoscaler se configure dans le node pool managé, avec une capacité minimale et maximale adaptées au budget du TP.
