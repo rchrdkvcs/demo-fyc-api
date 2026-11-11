@@ -1,0 +1,47 @@
+name: Validate Kubernetes manifests
+
+on:
+  pull_request:
+    paths:
+      - 'deploy/k8s/**'
+      - 'gitops/**'
+      - '.github/workflows/validate-manifests.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'deploy/k8s/**'
+      - 'gitops/**'
+      - '.github/workflows/validate-manifests.yml'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  KUBECONFORM_VERSION: v0.7.0
+  KUBERNETES_VERSION: 1.31.0
+
+jobs:
+  kubeconform:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install kubeconform
+        run: |
+          curl -sSfL "https://github.com/yannh/kubeconform/releases/download/${KUBECONFORM_VERSION}/kubeconform-linux-amd64.tar.gz" \
+            | tar -xz -C /usr/local/bin kubeconform
+
+      # -strict refuse les champs inconnus (faute de frappe dans un manifeste).
+      # -ignore-missing-schemas laisse passer les CRD sans schéma connu (Application Argo CD).
+      - name: Validate manifests
+        run: |
+          dirs="deploy/k8s"
+          if [ -d gitops ]; then dirs="$dirs gitops"; fi
+          kubeconform -strict -summary -ignore-missing-schemas \
+            -kubernetes-version "${KUBERNETES_VERSION}" $dirs
