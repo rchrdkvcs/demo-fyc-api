@@ -1,140 +1,96 @@
-# API de démonstration — AdonisJS
+# demo-fyc-api
 
-Une petite application pour comparer le déploiement sur un serveur, un VPS,
-Docker Compose ou Kubernetes. Les tweets sont stockés dans PostgreSQL via Lucid.
-Les produits restent des données fictives définies dans le code. Aucun compte requis.
+API de démonstration du cours **Déployer une API à différentes échelles**.
+AdonisJS 7 (TypeScript, Node.js 24) et PostgreSQL 16 : un CRUD `tweets` et deux
+sondes, `/health` et `/ready`.
+
+## Fil rouge
+
+La même API est déployée à quatre échelles, sans changer son code :
+
+1. **1 poste** — conteneur Docker et Docker Compose ;
+2. **1 serveur** — image publiée sur GHCR, VPS avec Nginx et TLS ;
+3. **1 cluster** — Kubernetes local avec k3d ;
+4. **déploiement automatisé** — GitOps avec Argo CD.
+
+Chaque chapitre correspond à un tag Git annoté `module.chapitre`
+(`2.1` = module 2, chapitre 1). Le détail est dans
+[`docs/repository-map.md`](docs/repository-map.md) et dans
+[`docs/chapters/`](docs/chapters/).
+
+## Parcours
+
+| Tag   | Chapitre                                   | Ajout dans le dépôt                                              |
+| ----- | ------------------------------------------ | ---------------------------------------------------------------- |
+| `0.1` | Socle                                      | CRUD tweets, `/health`, tests                                    |
+| `1.1` | Du serveur au conteneur                    | `/ready`, documentation du parcours                              |
+| `1.2` | Construire l'image                         | `Dockerfile` multi-stage non-root, `.dockerignore`               |
+| `1.3` | Lancer la stack avec Compose               | `compose.yaml` : API + PostgreSQL + volume + healthchecks        |
+| `2.1` | Publier l'image                            | Workflow GitHub Actions → GHCR                                   |
+| `2.2` | Déployer sur un VPS                        | `deploy/vps/` : Compose (image GHCR), Nginx, Certbot             |
+| `2.3` | Les limites d'une machine                  | Grille de panne (pas de code)                                    |
+| `3.1` | État désiré et architecture Kubernetes     | Cluster k3d, `deploy/k8s/00-namespace.yaml`                      |
+| `3.2` | Déployer l'API sur k3d                     | PostgreSQL + PVC, ConfigMap/Secret, migration, API, Ingress      |
+| `3.3` | Résister et scaler                         | requests/limits, rolling update, HPA                             |
+| `4.1` | Git comme source de vérité                 | CI de validation des manifestes (kubeconform)                    |
+| `4.2` | Déployer avec Argo CD                      | Application Argo CD → `deploy/k8s`                               |
+| `4.3` | Cas pratique : livrer une nouvelle version | Corrigé : route `/version`, image `4.3`                          |
+
+```sh
+git clone https://github.com/rchrdkvcs/demo-fyc-api.git
+cd demo-fyc-api
+git switch -c mon-essai 1.3   # partir d'un checkpoint sans modifier le tag
+```
 
 ## Démarrer en local
 
-Prérequis : **Node.js 24 ou supérieur**, **pnpm 11.7.0** et **PostgreSQL**.
+Prérequis : Node.js 24+, pnpm 11 et PostgreSQL 16 (ou Docker à partir du tag `1.3`).
 
 ```sh
 pnpm install --frozen-lockfile
-cp .env.example .env # uniquement si .env n’existe pas encore
+cp .env.example .env
 node ace generate:key
-# Créer la base demo_fyc dans PostgreSQL et renseigner DB_* dans .env
+createdb -h 127.0.0.1 -U postgres demo_fyc
 node ace migration:run
 pnpm dev
 ```
 
-L’application écoute sur <http://localhost:3333> par défaut.
+L'API écoute sur <http://localhost:3333>. Les variables `DB_*` de `.env`
+décrivent la connexion PostgreSQL.
 
 ## Routes
 
-| Méthode | Route         | Réponse                                                           |
-| ------- | ------------- | ----------------------------------------------------------------- |
-| GET     | /             | Page HTML avec des liens vers les deux endpoints                  |
-| GET     | /health       | JSON : état `ok`, durée de fonctionnement en secondes et date UTC |
-| GET     | /api/products | JSON : trois produits fictifs sous la clé `data`                  |
+| Méthode     | Route             | Réponse                                                  |
+| ----------- | ----------------- | -------------------------------------------------------- |
+| GET         | `/`               | Page HTML avec les liens utiles                          |
+| GET         | `/health`         | `200` si le processus répond (sonde de vie)              |
+| GET         | `/ready`          | `200` si PostgreSQL répond à `select 1`, sinon `503`     |
+| GET         | `/api/tweets`     | Liste des tweets, du plus récent au plus ancien          |
+| POST        | `/api/tweets`     | Création (`201`), `content` obligatoire, 280 caractères  |
+| GET         | `/api/tweets/:id` | Un tweet, `404` s'il n'existe pas                        |
+| PUT / PATCH | `/api/tweets/:id` | Modification du contenu, `422` si invalide               |
+| DELETE      | `/api/tweets/:id` | Suppression (`204`)                                      |
 
 ```sh
-curl -i http://localhost:3333/
-curl -i http://localhost:3333/health
-curl -i http://localhost:3333/api/products
-```
-
-Les trois routes renvoient HTTP 200. Une route inconnue renvoie HTTP 404.
-`/health` est une sonde de vie du processus, pas une vérification de services externes.
-Sa réponse n’est pas mise en cache.
-
-## Tweets — CRUD minimal
-
-Un tweet contient un `id`, un `content` et les dates `createdAt` / `updatedAt`.
-Le contenu est obligatoire, nettoyé des espaces en début/fin et limité à 280 caractères.
-Pas d’authentification : ces routes sont publiques, pour la démonstration uniquement.
-
-| Méthode     | Route           | Action                                                |
-| ----------- | --------------- | ----------------------------------------------------- |
-| GET         | /api/tweets     | Lister tous les tweets, du plus récent au plus ancien |
-| POST        | /api/tweets     | Créer un tweet (201)                                  |
-| GET         | /api/tweets/:id | Consulter un tweet                                    |
-| PUT / PATCH | /api/tweets/:id | Modifier le contenu                                   |
-| DELETE      | /api/tweets/:id | Supprimer un tweet (204, sans corps)                  |
-
-Les réponses JSON utilisent la clé `data`. Un tweet inexistant renvoie 404 ;
-un contenu invalide renvoie 422.
-
-Après avoir démarré PostgreSQL, créer les bases (adapter l’utilisateur si besoin) :
-
-```sh
-createdb -h 127.0.0.1 -U postgres demo_fyc
-createdb -h 127.0.0.1 -U postgres demo_fyc_test
-```
-
-Configurer `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD` et `DB_DATABASE`
-dans `.env` (voir `.env.example`), puis exécuter `node ace migration:run`.
-
-```sh
+curl -i http://localhost:3333/ready
+curl -X POST http://localhost:3333/api/tweets \
+  -H 'Content-Type: application/json' -d '{"content":"Mon premier tweet"}'
 curl http://localhost:3333/api/tweets
-curl -X POST http://localhost:3333/api/tweets -H 'Content-Type: application/json' -d '{"content":"Mon premier tweet"}'
-# Remplacer 1 par l’id renvoyé à la création
-curl http://localhost:3333/api/tweets/1
-curl -X PATCH http://localhost:3333/api/tweets/1 -H 'Content-Type: application/json' -d '{"content":"Tweet modifié"}'
-curl -X DELETE http://localhost:3333/api/tweets/1
 ```
 
-La migration est réversible avec `node ace migration:rollback` :
-attention, cela supprime la table et ses tweets.
+Les routes sont publiques, sans authentification : usage pédagogique uniquement.
 
-## Vérifier le projet
+## Tests
+
+Les tests fonctionnels utilisent la base `demo_fyc_test` (voir `.env.test`) :
+ne jamais pointer vers une base contenant des données à conserver.
 
 ```sh
+createdb -h 127.0.0.1 -U postgres demo_fyc_test
 pnpm test
-pnpm typecheck
 pnpm lint
-pnpm build
+pnpm typecheck
 ```
 
-Les tests des tweets utilisent la base dédiée `demo_fyc_test` définie dans `.env.test`.
-Ne jamais utiliser une base contenant des données à conserver : les migrations sont
-annulées après les tests. Chaque test s’exécute dans une transaction annulée.
-
-Les tests démarrent et arrêtent automatiquement un serveur HTTP sur le port
-configuré. Arrêter le serveur de développement avant de les lancer sur le même port.
-
-## Exécuter le build de production
-
-```sh
-pnpm build
-cd build
-pnpm install --prod --frozen-lockfile
-```
-
-Fournir ensuite les variables suivantes via le système de déploiement ou un fichier
-`build/.env` non versionné :
-
-```dotenv
-NODE_ENV=production
-HOST=0.0.0.0
-PORT=3333
-LOG_LEVEL=info
-APP_KEY=<une clé générée avec node ace generate:key>
-DB_HOST=<hôte PostgreSQL>
-DB_PORT=5432
-DB_USER=<utilisateur>
-DB_PASSWORD=<mot de passe>
-DB_DATABASE=<base de données>
-```
-
-Puis, depuis le dossier `build` :
-
-```sh
-node ace migration:run --force
-pnpm start
-```
-
-Le dossier `build` constitue l’application à déployer. Le fichier `.env` local
-n’est pas copié pendant le build. Ne jamais versionner la clé ni les secrets.
-`HOST=0.0.0.0` permet l’accès depuis l’extérieur du processus, notamment dans un
-conteneur ; le pare-feu et le reverse proxy restent à configurer selon le déploiement.
-PostgreSQL doit être accessible et ses données persistées indépendamment du build.
-
-## Structure utile
-
-- `start/routes.ts` : les routes de l’API.
-- `app/models/tweet.ts` et `database/migrations/` : modèle Lucid et table PostgreSQL.
-- `app/validators/tweet.ts` : validation du contenu.
-- `app/controllers/` : un contrôleur par endpoint. Le HTML est directement dans
-  `HomeController` pour éviter un moteur de templates sur cette simple page.
-- `start/env.ts` et `config/` : configuration du serveur, des logs et du chiffrement AdonisJS.
-- `tests/functional/endpoints.spec.ts` : vérification des réponses HTML, JSON et 404.
+Les tests démarrent leur propre serveur sur le port configuré : arrêter
+`pnpm dev` avant de les lancer.
