@@ -1,0 +1,24 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: demo-fyc-api
+  namespace: demo-fyc
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: demo-fyc-api
+  minReplicas: 2
+  maxReplicas: 5
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          # Pourcentage des requests CPU (100m) en moyenne sur les Pods.
+          averageUtilization: 60
+  behavior:
+    scaleDown:
+      # Attendre 2 minutes de charge basse avant de retirer des Pods.
+      stabilizationWindowSeconds: 120

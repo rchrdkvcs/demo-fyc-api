@@ -27,6 +27,7 @@ kubectl get nodes
 | `03-migration-job.yaml` | Job `node ace migration:run --force` |
 | `04-api.yaml` | Deployment de l'API (probes `/health` et `/ready`) et Service |
 | `05-ingress.yaml` | Ingress Traefik sur `api.localhost` |
+| `06-hpa.yaml` | HorizontalPodAutoscaler : 2 à 5 réplicas, cible CPU 60 % |
 
 ## Appliquer les manifestes
 
@@ -48,6 +49,16 @@ erreurs dans ses logs au premier démarrage sont normales.
 Un Job est immuable : pour relancer la migration avec une nouvelle image,
 supprimer l'ancien Job avant de réappliquer
 (`kubectl delete job demo-fyc-migrate -n demo-fyc --ignore-not-found`).
+
+## Autoscaling
+
+Le HPA lit la consommation CPU via metrics-server, installé d'office par k3d
+(`kubectl top pods -n demo-fyc` doit répondre). Sur un autre cluster, installer
+metrics-server avant d'appliquer `06-hpa.yaml`.
+
+```sh
+kubectl get hpa -n demo-fyc -w
+```
 
 ## Supprimer le cluster
 

@@ -4,7 +4,13 @@ metadata:
   name: demo-fyc-api
   namespace: demo-fyc
 spec:
-  replicas: 2
+  # Pas de champ replicas : le nombre de Pods est piloté par le HPA (06-hpa.yaml).
+  # Mise à jour progressive : un Pod neuf en plus, jamais un Pod prêt en moins.
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
   selector:
     matchLabels:
       app: demo-fyc-api
@@ -43,6 +49,15 @@ spec:
               port: http
             initialDelaySeconds: 5
             periodSeconds: 5
+          # requests : réservé pour le placement et base du calcul du HPA.
+          # limits : plafond ; au-delà de la mémoire, le conteneur est tué (OOMKilled).
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
 ---
 apiVersion: v1
 kind: Service
