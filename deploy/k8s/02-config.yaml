@@ -8,6 +8,7 @@ data:
   HOST: 0.0.0.0
   PORT: '3333'
   LOG_LEVEL: info
+  APP_VERSION: '4.3'
   DB_HOST: demo-fyc-db
   DB_PORT: '5432'
 ---

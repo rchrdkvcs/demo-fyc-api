@@ -25,7 +25,7 @@ spec:
         runAsUser: 1000
       containers:
         - name: api
-          image: ghcr.io/rchrdkvcs/demo-fyc-api:2.1
+          image: ghcr.io/rchrdkvcs/demo-fyc-api:4.3
           imagePullPolicy: IfNotPresent
           ports:
             - name: http

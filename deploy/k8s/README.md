@@ -31,9 +31,9 @@ kubectl get nodes
 
 ## Appliquer les manifestes
 
-L'image `ghcr.io/rchrdkvcs/demo-fyc-api:2.1` doit être publique sur GHCR.
+L'image `ghcr.io/rchrdkvcs/demo-fyc-api:4.3` doit être publique sur GHCR.
 Sinon, construire et importer une image locale du même nom :
-`docker build -t ghcr.io/rchrdkvcs/demo-fyc-api:2.1 . && k3d image import ghcr.io/rchrdkvcs/demo-fyc-api:2.1 -c demo-fyc`.
+`docker build -t ghcr.io/rchrdkvcs/demo-fyc-api:4.3 . && k3d image import ghcr.io/rchrdkvcs/demo-fyc-api:4.3 -c demo-fyc`.
 
 ```sh
 kubectl apply -f deploy/k8s/

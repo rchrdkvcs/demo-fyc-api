@@ -23,7 +23,7 @@ spec:
         runAsUser: 1000
       containers:
         - name: migrate
-          image: ghcr.io/rchrdkvcs/demo-fyc-api:2.1
+          image: ghcr.io/rchrdkvcs/demo-fyc-api:4.3
           imagePullPolicy: IfNotPresent
           command: ['node', 'ace', 'migration:run', '--force']
           envFrom:

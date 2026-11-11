@@ -65,6 +65,7 @@ décrivent la connexion PostgreSQL.
 | GET         | `/`               | Page HTML avec les liens utiles                          |
 | GET         | `/health`         | `200` si le processus répond (sonde de vie)              |
 | GET         | `/ready`          | `200` si PostgreSQL répond à `select 1`, sinon `503`     |
+| GET         | `/version`        | `{ "version": APP_VERSION }`, `dev` si non définie       |
 | GET         | `/api/tweets`     | Liste des tweets, du plus récent au plus ancien          |
 | POST        | `/api/tweets`     | Création (`201`), `content` obligatoire, 280 caractères  |
 | GET         | `/api/tweets/:id` | Un tweet, `404` s'il n'existe pas                        |
