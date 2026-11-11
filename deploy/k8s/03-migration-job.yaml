@@ -1,0 +1,28 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: demo-fyc-migrate
+  namespace: demo-fyc
+spec:
+  # Le Job réessaie tant que PostgreSQL n'est pas prêt.
+  backoffLimit: 6
+  ttlSecondsAfterFinished: 300
+  template:
+    metadata:
+      labels:
+        app: demo-fyc-migrate
+    spec:
+      restartPolicy: OnFailure
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+      containers:
+        - name: migrate
+          image: ghcr.io/rchrdkvcs/demo-fyc-api:2.1
+          imagePullPolicy: IfNotPresent
+          command: ['node', 'ace', 'migration:run', '--force']
+          envFrom:
+            - configMapRef:
+                name: demo-fyc-api-config
+            - secretRef:
+                name: demo-fyc-secrets

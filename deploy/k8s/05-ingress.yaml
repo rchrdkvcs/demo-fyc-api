@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: demo-fyc-api
+  namespace: demo-fyc
+spec:
+  # Traefik est l'Ingress Controller fourni par défaut avec k3d.
+  ingressClassName: traefik
+  rules:
+    - host: api.localhost
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: demo-fyc-api
+                port:
+                  name: http
