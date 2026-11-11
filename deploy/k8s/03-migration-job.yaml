@@ -3,6 +3,11 @@ kind: Job
 metadata:
   name: demo-fyc-migrate
   namespace: demo-fyc
+  annotations:
+    # Avec Argo CD : le Job est recréé à chaque synchronisation (un Job est immuable).
+    # Sans Argo CD, ces annotations sont ignorées.
+    argocd.argoproj.io/hook: Sync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
 spec:
   # Le Job réessaie tant que PostgreSQL n'est pas prêt.
   backoffLimit: 6

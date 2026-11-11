@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: demo-fyc
+  namespace: argocd
+spec:
+  project: default
+  source:
+    # Pour le cas pratique, remplacer par l'URL de votre fork.
+    repoURL: https://github.com/rchrdkvcs/demo-fyc-api.git
+    targetRevision: main
+    path: deploy/k8s
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: demo-fyc
+  syncPolicy:
+    automated:
+      # Supprime du cluster ce qui a été supprimé de Git.
+      prune: true
+      # Corrige toute modification faite hors Git.
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
